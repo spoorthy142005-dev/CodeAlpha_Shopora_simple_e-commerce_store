@@ -27,7 +27,7 @@
     <!-- Product Image Box -->
     <a href="{% url 'product_detail' product.id %}" class="card-img-container">
         {% if product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img" loading="lazy">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img" loading="lazy" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'300\' viewBox=\'0 0 300 300\' fill=\'%23f8fafc\'><rect width=\'300\' height=\'300\' fill=\'%23f1f5f9\'/><text x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%2394a3b8\' font-family=\'sans-serif\' font-size=\'16\'>Shopora Product</text></svg>';">
         {% else %}
             <div style="color: var(--text-light); text-align: center;">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">

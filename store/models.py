@@ -95,6 +95,12 @@ class Product(models.Model):
             return [h.strip() for h in self.highlights.split('\n') if h.strip()]
         return []
 
+    @property
+    def written_reviews_count(self):
+        if self.review_count:
+            return max(int(self.review_count * 0.75), 1)
+        return 0
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='gallery_images')
     image = models.ImageField(upload_to='products/gallery/')

@@ -7,11 +7,22 @@ from django.db import transaction
 from django.db.models import Q, Count, F
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils.http import url_has_allowed_host_and_scheme
 from decimal import Decimal
 import re
 
 from .models import Product, Category, Brand, Cart, CartItem, Order, OrderItem, Wishlist, ProductImage
 from .forms import RegisterForm, AddToCartForm, CheckoutForm
+
+def get_safe_redirect(request, target_url, default='home'):
+    """Ensures redirects remain within allowed hosts to prevent open redirect vulnerabilities."""
+    if target_url and url_has_allowed_host_and_scheme(
+        url=target_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure()
+    ):
+        return redirect(target_url)
+    return redirect(default)
 
 def home_view(request):
     products = Product.objects.select_related('brand', 'category').all()
@@ -69,12 +80,12 @@ def home_view(request):
     if discount_filter:
         try:
             disc_val = Decimal(discount_filter)
-            # mrp > price and ((mrp - price) / mrp) * 100 >= disc_val
-            # Cross-multiplication: (mrp - price) * 100 >= disc_val * mrp => mrp * (100 - disc_val) >= price * 100
-            products = products.filter(
-                mrp__gt=F('price'),
-                mrp__gte=F('price') * Decimal('100') / (Decimal('100') - disc_val)
-            )
+            if Decimal('0') < disc_val <= Decimal('100'):
+                ratio = (Decimal('100') - disc_val) / Decimal('100')
+                products = products.filter(
+                    mrp__gt=F('price'),
+                    price__lte=F('mrp') * ratio
+                )
         except Exception:
             pass
 
@@ -92,7 +103,9 @@ def home_view(request):
     elif sort == 'newest':
         products = products.order_by('-created_at')
     elif sort == 'discount_desc':
-        products = products.order_by('-mrp')
+        products = products.annotate(
+            discount_amount=F('mrp') - F('price')
+        ).order_by('-discount_amount', '-rating')
     else:  # Popularity / Default
         products = products.order_by('-is_bestseller', '-rating', '-review_count', '-created_at')
 
@@ -222,8 +235,7 @@ def toggle_wishlist_view(request, product_id):
             'wishlist_count': wishlist.products.count()
         })
 
-    next_url = request.META.get('HTTP_REFERER') or 'home'
-    return redirect(next_url)
+    return get_safe_redirect(request, request.META.get('HTTP_REFERER'), 'home')
 
 @login_required
 def move_wishlist_to_cart_view(request, product_id):
@@ -234,11 +246,30 @@ def move_wishlist_to_cart_view(request, product_id):
         messages.error(request, f"Sorry, '{product.name}' is currently out of stock.")
         return redirect('wishlist')
 
-    # Add to cart
+    # Add to cart with quantity & stock limit validation
     cart, _ = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product, defaults={'quantity': 0})
-    cart_item.quantity += 1
-    cart_item.save()
+    cart_item = CartItem.objects.filter(cart=cart, product=product).first()
+    current_qty = cart_item.quantity if cart_item else 0
+
+    if current_qty + 1 > product.stock:
+        messages.warning(
+            request,
+            f"Cannot add more of '{product.name}'. Only {product.stock} available in stock (you already have {current_qty} in cart)."
+        )
+        return redirect('wishlist')
+
+    if current_qty + 1 > 10:
+        messages.warning(
+            request,
+            f"Maximum retail limit of 10 units reached for '{product.name}'."
+        )
+        return redirect('cart_detail')
+
+    if cart_item:
+        cart_item.quantity += 1
+        cart_item.save(update_fields=['quantity', 'updated_at'])
+    else:
+        CartItem.objects.create(cart=cart, product=product, quantity=1)
 
     # Remove from wishlist
     wishlist.products.remove(product)
@@ -284,9 +315,7 @@ def login_view(request):
             
             messages.success(request, f"Welcome back, {user.username}!")
             next_url = request.GET.get('next') or request.POST.get('next')
-            if next_url:
-                return redirect(next_url)
-            return redirect('home')
+            return get_safe_redirect(request, next_url, 'home')
         else:
             messages.error(request, "Invalid username or password.")
     else:
@@ -295,8 +324,9 @@ def login_view(request):
     return render(request, 'login.html', {'form': form, 'next_url': next_url})
 
 def logout_view(request):
-    logout(request)
-    messages.info(request, "You have been securely logged out.")
+    if request.user.is_authenticated:
+        logout(request)
+        messages.info(request, "You have been securely logged out.")
     return redirect('home')
 
 @login_required
@@ -338,32 +368,46 @@ def add_to_cart_view(request, product_id):
 
     try:
         quantity = int(request.POST.get('quantity', 1))
-    except ValueError:
+    except (ValueError, TypeError):
         quantity = 1
 
     if quantity <= 0:
         quantity = 1
+    elif quantity > 10:
+        messages.warning(request, "Maximum retail limit is 10 units per order.")
+        quantity = 10
 
     cart, _ = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product, defaults={'quantity': 0})
-    
-    new_quantity = cart_item.quantity + quantity if not created else quantity
+    cart_item = CartItem.objects.filter(cart=cart, product=product).first()
+    current_qty = cart_item.quantity if cart_item else 0
+    new_quantity = current_qty + quantity
 
     if new_quantity > product.stock:
         messages.warning(
             request,
-            f"Cannot add {quantity} item(s). Only {product.stock} left in stock (you already have {cart_item.quantity} in cart)."
+            f"Cannot add {quantity} item(s). Only {product.stock} left in stock (you already have {current_qty} in cart)."
         )
         return redirect('product_detail', pk=product_id)
 
-    cart_item.quantity = new_quantity
-    cart_item.save()
+    if new_quantity > 10:
+        messages.warning(
+            request,
+            f"Maximum retail limit of 10 units per order reached for '{product.name}'."
+        )
+        return redirect('cart_detail')
+
+    if cart_item:
+        cart_item.quantity = new_quantity
+        cart_item.save(update_fields=['quantity', 'updated_at'])
+    else:
+        CartItem.objects.create(cart=cart, product=product, quantity=new_quantity)
+
     messages.success(request, f"Added {quantity} x '{product.name}' to your Cart.")
     
     if 'buy_now' in request.POST:
         return redirect('checkout')
 
-    return redirect(request.META.get('HTTP_REFERER') or 'cart_detail')
+    return get_safe_redirect(request, request.META.get('HTTP_REFERER'), 'cart_detail')
 
 @login_required
 def update_cart_item_view(request, item_id):
@@ -371,12 +415,16 @@ def update_cart_item_view(request, item_id):
         cart_item = get_object_or_404(CartItem, pk=item_id, cart__user=request.user)
         try:
             quantity = int(request.POST.get('quantity', 1))
-        except ValueError:
+        except (ValueError, TypeError):
             quantity = 1
 
         if quantity <= 0:
             cart_item.delete()
             messages.info(request, f"Removed '{cart_item.product.name}' from your cart.")
+        elif quantity > 10 and cart_item.product.stock >= 10:
+            cart_item.quantity = 10
+            cart_item.save(update_fields=['quantity', 'updated_at'])
+            messages.warning(request, f"Quantity capped at maximum retail limit (10 units) for '{cart_item.product.name}'.")
         elif quantity > cart_item.product.stock:
             messages.warning(
                 request,
@@ -384,7 +432,7 @@ def update_cart_item_view(request, item_id):
             )
         else:
             cart_item.quantity = quantity
-            cart_item.save()
+            cart_item.save(update_fields=['quantity', 'updated_at'])
             messages.success(request, f"Updated quantity for '{cart_item.product.name}'.")
 
     return redirect('cart_detail')
@@ -428,23 +476,27 @@ def checkout_view(request):
 
             try:
                 with transaction.atomic():
-                    # Lock records to prevent race conditions
-                    fresh_cart_items = CartItem.objects.select_related('product').select_for_update().filter(cart=cart)
-                    
-                    if not fresh_cart_items.exists():
+                    # Fetch fresh items and lock Products deterministically by ID to prevent race conditions
+                    fresh_cart_items = list(CartItem.objects.filter(cart=cart))
+                    if not fresh_cart_items:
                         messages.error(request, "Your cart is empty.")
                         return redirect('home')
+
+                    product_ids = [item.product_id for item in fresh_cart_items]
+                    locked_products = {
+                        p.id: p for p in Product.objects.filter(id__in=product_ids).order_by('id').select_for_update()
+                    }
 
                     calc_total_selling = Decimal('0.00')
                     calc_total_mrp = Decimal('0.00')
                     order_items_to_create = []
 
                     for item in fresh_cart_items:
-                        product = item.product
-                        if product.stock < item.quantity:
+                        product = locked_products.get(item.product_id)
+                        if not product or product.stock < item.quantity:
                             messages.error(
                                 request,
-                                f"Insufficient stock for '{product.name}'. Available: {product.stock}, requested: {item.quantity}."
+                                f"Insufficient stock for '{product.name if product else 'item'}'. Available: {product.stock if product else 0}, requested: {item.quantity}."
                             )
                             return redirect('cart_detail')
 
@@ -486,7 +538,7 @@ def checkout_view(request):
                         status=Order.STATUS_CONFIRMED
                     )
 
-                    # Create OrderItems with frozen prices & deduct stock
+                    # Create OrderItems with frozen prices & deduct stock atomically
                     for oi_data in order_items_to_create:
                         OrderItem.objects.create(
                             order=order,
@@ -496,13 +548,13 @@ def checkout_view(request):
                             price=oi_data['price'],
                             mrp=oi_data['mrp']
                         )
-                        # Deduct inventory
-                        product = oi_data['product']
-                        product.stock -= oi_data['quantity']
-                        product.save()
+                        # Deduct inventory on locked product
+                        prod = oi_data['product']
+                        prod.stock -= oi_data['quantity']
+                        prod.save(update_fields=['stock', 'updated_at'])
 
-                    # Clear cart
-                    fresh_cart_items.delete()
+                    # Clear cart within the atomic block
+                    CartItem.objects.filter(cart=cart).delete()
 
                     messages.success(request, f"Order #{order.id} placed successfully! An invoice has been generated.")
                     return redirect('order_success', order_id=order.id)
