@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load indian_currency %}
+
+{% block title %}My Wishlist ({{ products.count }}) | Shopora{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">My Wishlist</h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Items you've saved for later purchases ({{ products.count }} items)</p>
+    </div>
+    <a href="{% url 'home' %}" style="color: var(--primary); font-weight: 700; font-size: 0.9rem;">
+        &larr; Continue Shopping
+    </a>
+</div>
+
+{% if products %}
+    <div class="wishlist-grid">
+        {% for product in products %}
+            <article class="product-card" id="wishlist-item-{{ product.id }}">
+                <!-- Remove from wishlist button -->
+                <a href="{% url 'toggle_wishlist' product.id %}" 
+                   class="wishlist-toggle-btn active" 
+                   title="Remove from Wishlist"
+                   style="color: #ef4444;">
+                    &#10005;
+                </a>
+
+                <!-- Product Image -->
+                <a href="{% url 'product_detail' product.id %}" class="card-img-container">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img">
+                    {% else %}
+                        <div style="color: var(--text-light); text-align: center;">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            </svg>
+                        </div>
+                    {% endif %}
+                </a>
+
+                <div class="card-content">
+                    <span class="product-brand">{{ product.brand.name|default:"Shopora" }}</span>
+                    <h3 style="margin: 0;">
+                        <a href="{% url 'product_detail' product.id %}" class="product-name-link" title="{{ product.name }}">
+                            {{ product.name }}
+                        </a>
+                    </h3>
+
+                    <div class="rating-strip">
+                        <span class="star-badge">{{ product.rating }} ★</span>
+                        <span class="review-count">({{ product.review_count|inr_num }})</span>
+                    </div>
+
+                    <div class="pricing-row">
+                        <span class="current-price">{{ product.price|inr }}</span>
+                        {% if product.mrp and product.mrp > product.price %}
+                            <span class="original-mrp">{{ product.mrp|inr }}</span>
+                            <span class="discount-tag">{{ product.discount_percentage }}% off</span>
+                        {% endif %}
+                    </div>
+
+                    <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        {% if product.is_in_stock %}
+                            <a href="{% url 'move_wishlist_to_cart' product.id %}" class="btn-buy-now-large" style="text-align: center; padding: 0.55rem; font-size: 0.85rem;">
+                                Move to Cart &rarr;
+                            </a>
+                        {% else %}
+                            <button class="btn-buy-now-large" disabled style="background: #cbd5e1; cursor: not-allowed; text-align: center; padding: 0.55rem; font-size: 0.85rem;">
+                                Out of Stock
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state" style="background: white; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 3.5rem 1.5rem; text-align: center;">
+        <div style="font-size: 3.5rem; color: #cbd5e1; margin-bottom: 1rem;">&#9825;</div>
+        <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--text-main);">Empty Wishlist</h2>
+        <p style="color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; max-width: 450px; margin-left: auto; margin-right: auto;">
+            You have not added any items to your wishlist yet. Explore our top Indian brands and tap the heart icon to save items!
+        </p>
+        <a href="{% url 'home' %}" class="btn btn-primary" style="padding: 0.75rem 1.75rem; font-weight: 700;">
+            Explore Trending Products
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

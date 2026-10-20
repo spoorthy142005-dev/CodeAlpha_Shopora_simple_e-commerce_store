@@ -1,0 +1,123 @@
+{% load indian_currency %}
+<article class="product-card" id="product-card-{{ product.id }}">
+    <!-- Wishlist Heart Toggle Button -->
+    <button type="button" 
+            class="wishlist-toggle-btn {% if product.id in wishlisted_product_ids %}active{% endif %}" 
+            data-product-id="{{ product.id }}"
+            title="Add to Wishlist"
+            aria-label="Wishlist toggle">
+        {% if product.id in wishlisted_product_ids %}
+            &#9829;
+        {% else %}
+            &#9825;
+        {% endif %}
+    </button>
+
+    <!-- Top Badge (Bestseller, Hot Deal, Assured) -->
+    {% if product.badge %}
+        <span class="product-badge-flag {% if 'Bestseller' in product.badge %}bestseller{% endif %}">
+            {{ product.badge }}
+        </span>
+    {% elif product.discount_percentage >= 40 %}
+        <span class="product-badge-flag">
+            {{ product.discount_percentage }}% OFF
+        </span>
+    {% endif %}
+
+    <!-- Product Image Box -->
+    <a href="{% url 'product_detail' product.id %}" class="card-img-container">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img" loading="lazy">
+        {% else %}
+            <div style="color: var(--text-light); text-align: center;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                </svg>
+            </div>
+        {% endif %}
+    </a>
+
+    <!-- Card Content -->
+    <div class="card-content">
+        <!-- Brand Name -->
+        <span class="product-brand">
+            {% if product.brand %}{{ product.brand.name }}{% else %}Shopora{% endif %}
+        </span>
+
+        <!-- Title -->
+        <h3 style="margin: 0;">
+            <a href="{% url 'product_detail' product.id %}" class="product-name-link" title="{{ product.name }}">
+                {{ product.name }}
+            </a>
+        </h3>
+
+        <!-- Rating Strip -->
+        <div class="rating-strip">
+            <span class="star-badge">{{ product.rating }} ★</span>
+            <span class="review-count">({{ product.review_count|inr_num }})</span>
+        </div>
+
+        <!-- Pricing Row (Selling Price, MRP, Discount) -->
+        <div class="pricing-row">
+            <span class="current-price">{{ product.price|inr }}</span>
+            {% if product.mrp and product.mrp > product.price %}
+                <span class="original-mrp">{{ product.mrp|inr }}</span>
+                <span class="discount-tag">{{ product.discount_percentage }}% off</span>
+            {% endif %}
+        </div>
+
+        <!-- Assured & Delivery Tag -->
+        <div class="delivery-tag">
+            <span style="color: var(--discount-green); font-weight: 700;">Free Delivery</span>
+            <span>&bull;</span>
+            <span class="assured-badge">&#10003; Shopora Assured</span>
+        </div>
+
+        <!-- Card CTA Actions: Add to Cart and Buy Now -->
+        {% if product.is_in_stock %}
+            {% if user.is_authenticated %}
+                <form action="{% url 'add_to_cart' product.id %}" method="post" class="card-btn-group">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="btn-card-cart" id="quick-add-{{ product.id }}" title="Add to Cart">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        Add
+                    </button>
+                    <button type="submit" name="buy_now" value="true" class="btn-card-buy" id="quick-buy-{{ product.id }}" title="Buy Now">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                        Buy Now
+                    </button>
+                </form>
+            {% else %}
+                <div class="card-btn-group">
+                    <a href="{% url 'login' %}?next={{ request.get_full_path }}" class="btn-card-cart">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        Add
+                    </a>
+                    <a href="{% url 'login' %}?next={% url 'product_detail' product.id %}" class="btn-card-buy">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                        Buy Now
+                    </a>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="card-btn-group">
+                <button class="btn-card-cart" disabled style="background: #f1f5f9; color: var(--danger); cursor: not-allowed; width: 100%;">
+                    Out of Stock
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</article>

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load indian_currency %}
+
+{% block title %}Order #SHP{{ order.id }}IND Confirmed | Shopora{% endblock %}
+
+{% block content %}
+<div style="max-width: 720px; margin: 1.5rem auto;">
+    <div style="background: white; border-radius: var(--radius-md); border: 1px solid var(--border); padding: 2.5rem; text-align: center; box-shadow: var(--shadow-card);">
+        
+        <!-- Big Green Success Icon -->
+        <div style="width: 76px; height: 76px; background-color: var(--discount-bg); color: var(--discount-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">
+            Order Placed Successfully!
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.75rem;">
+            Thank you for shopping with Shopora! Your order has been placed and confirmed. A confirmation SMS &amp; email has been sent to your registered contact.
+        </p>
+
+        <!-- Order Summary Card -->
+        <div style="background: #f8fafc; border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 1.5rem; text-align: left; margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+                <span style="color: var(--text-muted); font-size: 0.88rem;">Order ID:</span>
+                <span style="font-weight: 800; color: var(--primary);">#SHP{{ order.id }}IND</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+                <span style="color: var(--text-muted); font-size: 0.88rem;">Order Placed Date:</span>
+                <span style="font-weight: 600;">{{ order.created_at|date:"d M Y, h:i A" }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+                <span style="color: var(--text-muted); font-size: 0.88rem;">Payment Method:</span>
+                <span style="font-weight: 600;">{{ order.payment_method }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+                <span style="color: var(--text-muted); font-size: 0.88rem;">Deliver To:</span>
+                <span style="font-weight: 600; text-align: right; max-width: 60%;">
+                    {{ order.full_name }} ({{ order.phone_number }})<br>
+                    <span style="font-weight: 400; font-size: 0.82rem; color: #475569;">
+                        {{ order.shipping_address }}, {{ order.city }} - {{ order.pincode }}, {{ order.state }} ({{ order.address_type }})
+                    </span>
+                </span>
+            </div>
+
+            <!-- Items Breakdown -->
+            <div style="margin-top: 1rem;">
+                <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.6rem;">Items in this Shipment:</h4>
+                {% for item in items %}
+                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        <span>{{ item.quantity }} &times; {{ item.product_name }}</span>
+                        <span style="font-weight: 700;">{{ item.subtotal|inr }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div style="display: flex; justify-content: space-between; border-top: 2px dashed var(--border); padding-top: 0.75rem; margin-top: 1rem;">
+                <span style="font-weight: 700; font-size: 1.1rem;">Total Amount Paid:</span>
+                <span style="font-weight: 800; font-size: 1.2rem; color: var(--text-main);">{{ order.total_amount|inr }}</span>
+            </div>
+            
+            {% if order.savings_total > 0 %}
+                <div style="color: var(--discount-green); font-weight: 700; font-size: 0.85rem; margin-top: 0.5rem; text-align: right;">
+                    You saved {{ order.savings_total|inr }} on this purchase!
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'order_detail' order.id %}" class="btn-buy-now-large" style="padding: 0.75rem 1.75rem;">
+                View Order Invoice &rarr;
+            </a>
+            <a href="{% url 'order_list' %}" class="btn btn-secondary" style="padding: 0.75rem 1.5rem; font-weight: 700;">
+                Track My Orders
+            </a>
+            <a href="{% url 'home' %}" class="btn btn-secondary" style="padding: 0.75rem 1.5rem; font-weight: 700;">
+                Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

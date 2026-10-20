@@ -1,0 +1,367 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load indian_currency %}
+
+{% block title %}
+    {% if query %}
+        Search results for "{{ query }}" | Shopora
+    {% elif selected_category %}
+        {{ selected_category.name }} Store | Shopora
+    {% else %}
+        Shopora | Everything you love, all in one place
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<!-- 1. Value Proposition Strip -->
+<div class="value-strip">
+    <div class="value-item">
+        <div class="value-icon">🚀</div>
+        <div>
+            <div class="value-title">Free Delivery</div>
+            <div class="value-desc">On all orders above ₹499</div>
+        </div>
+    </div>
+    <div class="value-item">
+        <div class="value-icon">🛡️</div>
+        <div>
+            <div class="value-title">100% Genuine Brands</div>
+            <div class="value-desc">Direct from verified brands</div>
+        </div>
+    </div>
+    <div class="value-item">
+        <div class="value-icon">🔄</div>
+        <div>
+            <div class="value-title">7-Day Easy Replacement</div>
+            <div class="value-desc">Hassle-free doorstep pickup</div>
+        </div>
+    </div>
+    <div class="value-item">
+        <div class="value-icon">💵</div>
+        <div>
+            <div class="value-title">Cash on Delivery</div>
+            <div class="value-desc">Pay safely at doorstep</div>
+        </div>
+    </div>
+</div>
+
+{% if is_home_root %}
+    <!-- Visual Category Cards Section -->
+    <div class="visual-categories-section">
+        <div class="visual-categories-grid">
+            <a href="{% url 'home' %}?category=mobiles-electronics" class="visual-cat-card">
+                <div class="visual-cat-icon">📱</div>
+                <div class="visual-cat-name">Mobiles &amp; 5G</div>
+                <div class="visual-cat-offer">From ₹21,999</div>
+            </a>
+            <a href="{% url 'home' %}?category=laptops-accessories" class="visual-cat-card">
+                <div class="visual-cat-icon">💻</div>
+                <div class="visual-cat-name">Laptops &amp; PCs</div>
+                <div class="visual-cat-offer">Up to 35% Off</div>
+            </a>
+            <a href="{% url 'home' %}?category=electronics" class="visual-cat-card">
+                <div class="visual-cat-icon">📺</div>
+                <div class="visual-cat-name">TV &amp; Electronics</div>
+                <div class="visual-cat-offer">Up to 45% Off</div>
+            </a>
+            <a href="{% url 'home' %}?category=audio-headphones" class="visual-cat-card">
+                <div class="visual-cat-icon">🎧</div>
+                <div class="visual-cat-name">Audio &amp; Music</div>
+                <div class="visual-cat-offer">From ₹1,299</div>
+            </a>
+            <a href="{% url 'home' %}?category=accessories" class="visual-cat-card">
+                <div class="visual-cat-icon">🔌</div>
+                <div class="visual-cat-name">Tech Accessories</div>
+                <div class="visual-cat-offer">From ₹499</div>
+            </a>
+            <a href="{% url 'home' %}?category=smart-home" class="visual-cat-card">
+                <div class="visual-cat-icon">🏡</div>
+                <div class="visual-cat-name">Smart Home</div>
+                <div class="visual-cat-offer">Up to 40% Off</div>
+            </a>
+            <a href="{% url 'home' %}?category=fashion-clothing" class="visual-cat-card">
+                <div class="visual-cat-icon">👕</div>
+                <div class="visual-cat-name">Fashion Wear</div>
+                <div class="visual-cat-offer">Min 40% Off</div>
+            </a>
+            <a href="{% url 'home' %}?category=footwear" class="visual-cat-card">
+                <div class="visual-cat-icon">👟</div>
+                <div class="visual-cat-name">Footwear</div>
+                <div class="visual-cat-offer">Top Brands</div>
+            </a>
+            <a href="{% url 'home' %}?category=watches-accessories" class="visual-cat-card">
+                <div class="visual-cat-icon">⌚</div>
+                <div class="visual-cat-name">Watches</div>
+                <div class="visual-cat-offer">From ₹1,499</div>
+            </a>
+            <a href="{% url 'home' %}?category=home-kitchen" class="visual-cat-card">
+                <div class="visual-cat-icon">🍳</div>
+                <div class="visual-cat-name">Home &amp; Kitchen</div>
+                <div class="visual-cat-offer">Up to 50% Off</div>
+            </a>
+            <a href="{% url 'home' %}?category=beauty-personal-care" class="visual-cat-card">
+                <div class="visual-cat-icon">✨</div>
+                <div class="visual-cat-name">Beauty &amp; Care</div>
+                <div class="visual-cat-offer">Pure Ayurveda</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 2. Hero Festive Banner -->
+    <div class="hero-banner">
+        <div>
+            <span class="hero-tag">&#9889; BIG FESTIVE DHAMAKA SALE</span>
+            <h1 class="hero-title">Great Deals on Top <span class="highlight">Indian Brands</span></h1>
+            <p class="hero-subtitle">
+                Save up to 70% on Apple, Samsung, boAt, Titan, Nike, Levi's &amp; Philips. Instant 10% bank discount on all cards.
+            </p>
+            <div class="hero-deals-pills">
+                <span class="deal-pill">📱 5G Mobiles from ₹21,999</span>
+                <span class="deal-pill">🎧 boAt &amp; Sony Audio Up to 67% Off</span>
+                <span class="deal-pill">👕 Levi's &amp; Allen Solly 40-50% Off</span>
+                <span class="deal-pill">🏠 Philips Air Fryer at ₹6,499</span>
+            </div>
+        </div>
+        <div style="text-align: right; z-index: 2;" class="hero-brand-callout">
+            <div style="font-size: 0.85rem; color: #ffeb3b; font-weight: 700; text-transform: uppercase;">SPECIAL PARTNER OFFERS</div>
+            <div style="font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem;">HDFC &bull; SBI &bull; ICICI</div>
+            <div style="font-size: 0.8rem; color: #bfdbfe; margin-top: 0.25rem;">No-Cost EMI available on all purchases</div>
+        </div>
+    </div>
+
+    <!-- 3. Deals of the Day Showcase -->
+    {% if deal_products %}
+        <div style="margin-bottom: 2rem;">
+            <div class="section-header">
+                <div class="section-title">
+                    <span>&#9889; DEALS OF THE DAY</span>
+                    <span class="timer-chip">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Ends in 14h : 22m : 08s
+                    </span>
+                </div>
+                <a href="{% url 'home' %}?discount=30" style="color: var(--primary); font-size: 0.85rem; font-weight: 700;">
+                    VIEW ALL DEALS &rarr;
+                </a>
+            </div>
+
+            <div class="products-grid" style="background: white; padding: 1.25rem; border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md);">
+                {% for product in deal_products %}
+                    {% include "includes/product_card.html" with product=product %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- 4. Trending & Recommended Showcase -->
+    {% if trending_products %}
+        <div style="margin-bottom: 2rem;">
+            <div class="section-header">
+                <div class="section-title">
+                    <span>🔥 TRENDING ON SHOPORA</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">
+                        Highest rated by verified customers
+                    </span>
+                </div>
+                <a href="{% url 'home' %}?rating=4.5" style="color: var(--primary); font-size: 0.85rem; font-weight: 700;">
+                    VIEW TOP RATED &rarr;
+                </a>
+            </div>
+
+            <div class="products-grid" style="background: white; padding: 1.25rem; border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md);">
+                {% for product in trending_products %}
+                    {% include "includes/product_card.html" with product=product %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endif %}
+
+<!-- 4. Main Catalog Section with Filters & Sorting -->
+<div class="catalog-layout">
+    <!-- Left Filter Sidebar -->
+    <aside class="filter-sidebar">
+        <div class="filter-header">
+            <h3>Filters</h3>
+            {% if query or selected_category or selected_brand or min_price or max_price or rating_filter or discount_filter or availability %}
+                <a href="{% url 'home' %}" class="clear-btn">Clear All</a>
+            {% endif %}
+        </div>
+
+        <form method="get" action="{% url 'home' %}" id="filter-sidebar-form">
+            {% if query %}
+                <input type="hidden" name="q" value="{{ query }}">
+            {% endif %}
+
+            <!-- Category Filter -->
+            <div class="filter-group">
+                <div class="filter-group-title">Categories</div>
+                <ul class="filter-list">
+                    <li style="margin-bottom: 0.25rem;">
+                        <a href="{% url 'home' %}{% if query %}?q={{ query }}{% endif %}" 
+                           style="font-size: 0.85rem; font-weight: {% if not selected_category %}700; color: var(--primary);{% else %}500;{% endif %}">
+                            All Categories ({{ total_count }})
+                        </a>
+                    </li>
+                    {% for cat in categories %}
+                        <li>
+                            <a href="{% url 'home' %}?category={{ cat.slug }}{% if query %}&q={{ query }}{% endif %}{% if selected_brand %}&brand={{ selected_brand.slug }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+                               style="font-size: 0.85rem; font-weight: {% if selected_category and selected_category.slug == cat.slug %}700; color: var(--primary);{% else %}500;{% endif %}">
+                                {{ cat.icon }} {{ cat.name }} ({{ cat.num_products }})
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Price Range Filter -->
+            <div class="filter-group">
+                <div class="filter-group-title">Price Range (₹)</div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem;">
+                    <input type="number" name="min_price" class="form-control" placeholder="Min" value="{{ min_price }}" style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+                    <span>to</span>
+                    <input type="number" name="max_price" class="form-control" placeholder="Max" value="{{ max_price }}" style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+                </div>
+                <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; font-size: 0.8rem;">Apply Price</button>
+                <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.82rem;">
+                    <a href="{% url 'home' %}?max_price=1500{% if selected_category %}&category={{ selected_category.slug }}{% endif %}" style="color: var(--text-muted);">&bull; Under ₹1,500</a>
+                    <a href="{% url 'home' %}?min_price=1500&max_price=5000{% if selected_category %}&category={{ selected_category.slug }}{% endif %}" style="color: var(--text-muted);">&bull; ₹1,500 - ₹5,000</a>
+                    <a href="{% url 'home' %}?min_price=5000&max_price=25000{% if selected_category %}&category={{ selected_category.slug }}{% endif %}" style="color: var(--text-muted);">&bull; ₹5,000 - ₹25,000</a>
+                    <a href="{% url 'home' %}?min_price=25000{% if selected_category %}&category={{ selected_category.slug }}{% endif %}" style="color: var(--text-muted);">&bull; Above ₹25,000</a>
+                </div>
+            </div>
+
+            <!-- Customer Ratings Filter -->
+            <div class="filter-group">
+                <div class="filter-group-title">Customer Ratings</div>
+                <div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.85rem;">
+                    <a href="{% url 'home' %}?rating=4{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if query %}&q={{ query }}{% endif %}"
+                       style="display: flex; align-items: center; gap: 0.35rem; font-weight: {% if rating_filter == '4' %}700; color: var(--primary);{% else %}500;{% endif %}">
+                        <span class="star-badge">4 ★</span> &amp; above
+                    </a>
+                    <a href="{% url 'home' %}?rating=4.5{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if query %}&q={{ query }}{% endif %}"
+                       style="display: flex; align-items: center; gap: 0.35rem; font-weight: {% if rating_filter == '4.5' %}700; color: var(--primary);{% else %}500;{% endif %}">
+                        <span class="star-badge">4.5 ★</span> &amp; above (Top Rated)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Discount Filter -->
+            <div class="filter-group">
+                <div class="filter-group-title">Discount</div>
+                <div style="display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem;">
+                    <a href="{% url 'home' %}?discount=50{% if selected_category %}&category={{ selected_category.slug }}{% endif %}" style="color: var(--discount-green); font-weight: {% if discount_filter == '50' %}700;{% else %}500;{% endif %}">50% or more</a>
+                    <a href="{% url 'home' %}?discount=30{% if selected_category %}&category={{ selected_category.slug }}{% endif %}" style="color: var(--discount-green); font-weight: {% if discount_filter == '30' %}700;{% else %}500;{% endif %}">30% or more</a>
+                    <a href="{% url 'home' %}?discount=20{% if selected_category %}&category={{ selected_category.slug }}{% endif %}" style="color: var(--discount-green); font-weight: {% if discount_filter == '20' %}700;{% else %}500;{% endif %}">20% or more</a>
+                    <a href="{% url 'home' %}?discount=10{% if selected_category %}&category={{ selected_category.slug }}{% endif %}" style="color: var(--discount-green); font-weight: {% if discount_filter == '10' %}700;{% else %}500;{% endif %}">10% or more</a>
+                </div>
+            </div>
+
+            <!-- Availability Filter -->
+            <div class="filter-group" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+                <div class="filter-group-title">Availability</div>
+                <label class="filter-checkbox-label">
+                    <input type="checkbox" name="availability" value="in_stock" {% if availability == 'in_stock' %}checked{% endif %} onchange="this.form.submit()">
+                    <span>Exclude Out of Stock</span>
+                </label>
+            </div>
+        </form>
+    </aside>
+
+    <!-- Right Products Column -->
+    <div>
+        <!-- Sort Bar -->
+        <div class="catalog-sort-bar">
+            <div>
+                <span style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">
+                    {% if selected_category %}
+                        {{ selected_category.name }}
+                    {% elif query %}
+                        Results for "{{ query }}"
+                    {% else %}
+                        All Products
+                    {% endif %}
+                </span>
+                <span style="font-size: 0.82rem; color: var(--text-muted); margin-left: 0.35rem;">
+                    (Showing {{ products.paginator.count }} items)
+                </span>
+            </div>
+
+            <div class="sort-options">
+                <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Sort By:</span>
+                <a href="?{% if pagination_query %}{{ pagination_query }}&{% endif %}sort=popularity" 
+                   class="sort-option-btn {% if sort == 'popularity' or not sort %}active{% endif %}">
+                    Popularity
+                </a>
+                <a href="?{% if pagination_query %}{{ pagination_query }}&{% endif %}sort=price_asc" 
+                   class="sort-option-btn {% if sort == 'price_asc' %}active{% endif %}">
+                    Price -- Low to High
+                </a>
+                <a href="?{% if pagination_query %}{{ pagination_query }}&{% endif %}sort=price_desc" 
+                   class="sort-option-btn {% if sort == 'price_desc' %}active{% endif %}">
+                    Price -- High to Low
+                </a>
+                <a href="?{% if pagination_query %}{{ pagination_query }}&{% endif %}sort=newest" 
+                   class="sort-option-btn {% if sort == 'newest' %}active{% endif %}">
+                    Newest First
+                </a>
+                <a href="?{% if pagination_query %}{{ pagination_query }}&{% endif %}sort=discount_desc" 
+                   class="sort-option-btn {% if sort == 'discount_desc' %}active{% endif %}">
+                    Discount
+                </a>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        {% if products %}
+            <div class="products-grid">
+                {% for product in products %}
+                    {% include "includes/product_card.html" with product=product %}
+                {% endfor %}
+            </div>
+
+            <!-- Pagination Bar -->
+            {% if products.has_other_pages %}
+                <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 2rem;">
+                    {% if products.has_previous %}
+                        <a href="?{% if pagination_query %}{{ pagination_query }}&{% endif %}page={{ products.previous_page_number }}" 
+                           class="btn btn-secondary btn-sm">
+                            &larr; Previous
+                        </a>
+                    {% endif %}
+
+                    {% for num in products.paginator.page_range %}
+                        {% if products.number == num %}
+                            <span class="btn btn-primary btn-sm" style="background-color: var(--primary);">{{ num }}</span>
+                        {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                            <a href="?{% if pagination_query %}{{ pagination_query }}&{% endif %}page={{ num }}" 
+                               class="btn btn-secondary btn-sm">
+                                {{ num }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if products.has_next %}
+                        <a href="?{% if pagination_query %}{{ pagination_query }}&{% endif %}page={{ products.next_page_number }}" 
+                           class="btn btn-secondary btn-sm">
+                            Next &rarr;
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state" style="background: white;">
+                <div class="empty-state-icon">&#128269;</div>
+                <h3 style="font-size: 1.3rem; font-weight: 700;">No products found matching your filters</h3>
+                <p style="color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem;">
+                    Try clearing price, brand, or discount filters to view available items.
+                </p>
+                <a href="{% url 'home' %}" class="btn btn-primary">Clear All Filters</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

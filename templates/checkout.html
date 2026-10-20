@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load indian_currency %}
+
+{% block title %}Secure Delivery &amp; Checkout | Shopora{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">Delivery Address &amp; Order Checkout</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Enter your Indian delivery address and select a payment method</p>
+</div>
+
+<div class="cart-checkout-grid">
+    <!-- Left: Indian Delivery Address & Payment Form -->
+    <div class="checkout-card">
+        <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-light);">
+            <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">1</span>
+            DELIVERY ADDRESS (INDIA)
+        </h2>
+
+        <form method="post" action="{% url 'checkout' %}" id="checkout-form">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.full_name.id_for_label }}" class="form-label">
+                        Full Name <span style="color: var(--danger);">*</span>
+                    </label>
+                    {{ form.full_name }}
+                    {% if form.full_name.errors %}
+                        {% for err in form.full_name.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.phone_number.id_for_label }}" class="form-label">
+                        10-Digit Mobile Number <span style="color: var(--danger);">*</span>
+                    </label>
+                    {{ form.phone_number }}
+                    {% if form.phone_number.errors %}
+                        {% for err in form.phone_number.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.pincode.id_for_label }}" class="form-label">
+                        PIN Code <span style="color: var(--danger);">*</span>
+                    </label>
+                    {{ form.pincode }}
+                    {% if form.pincode.errors %}
+                        {% for err in form.pincode.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.city.id_for_label }}" class="form-label">
+                        City / District <span style="color: var(--danger);">*</span>
+                    </label>
+                    {{ form.city }}
+                    {% if form.city.errors %}
+                        {% for err in form.city.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.state.id_for_label }}" class="form-label">
+                    State <span style="color: var(--danger);">*</span>
+                </label>
+                {{ form.state }}
+                {% if form.state.errors %}
+                    {% for err in form.state.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.shipping_address.id_for_label }}" class="form-label">
+                    Flat, House no., Building, Area &amp; Street <span style="color: var(--danger);">*</span>
+                </label>
+                {{ form.shipping_address }}
+                {% if form.shipping_address.errors %}
+                    {% for err in form.shipping_address.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Address Type (Home vs Work) -->
+            <div class="form-group">
+                <label class="form-label">Address Type</label>
+                <div class="radio-options-group">
+                    {% for radio in form.address_type %}
+                        <label class="radio-card">
+                            {{ radio.tag }}
+                            <span>{{ radio.choice_label }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Payment Options -->
+            <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin: 1.75rem 0 1rem 0; display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-light);">
+                <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">2</span>
+                PAYMENT OPTIONS
+            </h2>
+
+            <div class="form-group">
+                <div style="display: flex; flex-direction: column; gap: 0.85rem; background: #f8fafc; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+                    {% for radio in form.payment_method %}
+                        <label class="radio-card" style="font-weight: 600;">
+                            {{ radio.tag }}
+                            <span>{{ radio.choice_label }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <button type="submit" class="btn-buy-now-large" style="width: 100%; padding: 0.95rem; font-size: 1.05rem;" id="checkout-confirm-btn">
+                    CONFIRM &amp; PLACE ORDER ({{ final_payable|inr }})
+                </button>
+                <div style="text-align: center; margin-top: 0.75rem;">
+                    <a href="{% url 'cart_detail' %}" style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">
+                        &larr; Return to Cart
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Right: Order Summary Review -->
+    <div class="price-summary-card">
+        <h3 class="price-summary-title">ORDER SUMMARY</h3>
+
+        <div style="max-height: 240px; overflow-y: auto; margin-bottom: 1rem; padding-right: 0.25rem;">
+            {% for item in cart_items %}
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; font-size: 0.85rem;">
+                    <div>
+                        <div style="font-weight: 700; color: var(--text-main);">{{ item.product.name }}</div>
+                        <div style="color: var(--text-muted); font-size: 0.78rem;">
+                            Qty: {{ item.quantity }} &bull; {{ item.product.price|inr }} each
+                        </div>
+                    </div>
+                    <div style="font-weight: 800; color: var(--text-main);">
+                        {{ item.subtotal|inr }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="summary-line" style="border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+            <span style="color: #475569;">Total MRP</span>
+            <span style="font-weight: 600;">{{ total_mrp|inr }}</span>
+        </div>
+
+        <div class="summary-line">
+            <span style="color: #475569;">Discount on MRP</span>
+            <span style="color: var(--discount-green); font-weight: 700;">- {{ savings|inr }}</span>
+        </div>
+
+        <div class="summary-line">
+            <span style="color: #475569;">Delivery Charges</span>
+            {% if delivery_fee == 0 %}
+                <span style="color: var(--discount-green); font-weight: 700;">FREE</span>
+            {% else %}
+                <span style="font-weight: 600;">{{ delivery_fee|inr }}</span>
+            {% endif %}
+        </div>
+
+        <div class="summary-line">
+            <span style="color: #475569;">Secured Packaging Fee</span>
+            <span style="font-weight: 600;">{{ packaging_fee|inr }}</span>
+        </div>
+
+        <div class="summary-line total-line">
+            <span>Total Amount Payable</span>
+            <span style="color: var(--text-main);">{{ final_payable|inr }}</span>
+        </div>
+
+        {% if savings > 0 %}
+            <div class="savings-banner">
+                🎉 Your total savings on this order: {{ savings|inr }}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

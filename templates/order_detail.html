@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load indian_currency %}
+
+{% block title %}Invoice for Order #SHP{{ order.id }}IND | Shopora{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <a href="{% url 'order_list' %}" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">
+            &larr; Back to Order History
+        </a>
+        <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">Order #SHP{{ order.id }}IND</h1>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">Placed on {{ order.created_at|date:"d M Y, h:i A" }}</p>
+    </div>
+
+    <div>
+        {% if order.status == 'Delivered' %}
+            <span class="badge badge-success" style="font-size: 0.85rem; padding: 0.5rem 1rem;">&#10003; Status: {{ order.status }}</span>
+        {% elif order.status == 'Shipped' %}
+            <span class="badge badge-info" style="font-size: 0.85rem; padding: 0.5rem 1rem;">&#128666; Status: {{ order.status }}</span>
+        {% elif order.status == 'Cancelled' %}
+            <span class="badge badge-danger" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Status: {{ order.status }}</span>
+        {% else %}
+            <span class="badge badge-warning" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Status: {{ order.status }}</span>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Order Delivery Status Tracker -->
+<div style="background: white; border-radius: var(--radius-md); border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="font-size: 0.95rem; font-weight: 700; margin-bottom: 1rem;">Shipment Tracking Timeline</div>
+    <div style="display: flex; justify-content: space-between; position: relative;">
+        <div style="text-align: center; flex: 1;">
+            <div style="width: 32px; height: 32px; background: var(--discount-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.4rem; font-weight: 700;">&#10003;</div>
+            <div style="font-size: 0.82rem; font-weight: 700;">Order Confirmed</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">{{ order.created_at|date:"d M" }}</div>
+        </div>
+
+        <div style="text-align: center; flex: 1;">
+            <div style="width: 32px; height: 32px; background: {% if order.status == 'Shipped' or order.status == 'Delivered' %}var(--discount-green){% else %}#cbd5e1{% endif %}; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.4rem; font-weight: 700;">
+                {% if order.status == 'Shipped' or order.status == 'Delivered' %}&#10003;{% else %}2{% endif %}
+            </div>
+            <div style="font-size: 0.82rem; font-weight: 700;">Shipped via Express</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">BlueDart Logistics</div>
+        </div>
+
+        <div style="text-align: center; flex: 1;">
+            <div style="width: 32px; height: 32px; background: {% if order.status == 'Delivered' %}var(--discount-green){% else %}#cbd5e1{% endif %}; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.4rem; font-weight: 700;">
+                {% if order.status == 'Delivered' %}&#10003;{% else %}3{% endif %}
+            </div>
+            <div style="font-size: 0.82rem; font-weight: 700;">Out for Delivery</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">Doorstep Agent</div>
+        </div>
+
+        <div style="text-align: center; flex: 1;">
+            <div style="width: 32px; height: 32px; background: {% if order.status == 'Delivered' %}var(--discount-green){% else %}#cbd5e1{% endif %}; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.4rem; font-weight: 700;">
+                {% if order.status == 'Delivered' %}&#10003;{% else %}4{% endif %}
+            </div>
+            <div style="font-size: 0.82rem; font-weight: 700;">Delivered</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">Verified OTP</div>
+        </div>
+    </div>
+</div>
+
+<div class="cart-checkout-grid">
+    <!-- Items Purchased Table Card -->
+    <div class="cart-items-card">
+        <div style="padding: 1rem 1.25rem; background: #fafafa; border-bottom: 1px solid var(--border-light); font-weight: 700; font-size: 0.9rem; color: var(--text-muted);">
+            ITEMS PURCHASED IN THIS INVOICE
+        </div>
+
+        <div style="padding: 1rem;">
+            {% for item in items %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--border-light);">
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div style="width: 65px; height: 65px; border: 1px solid var(--border-light); border-radius: 4px; padding: 4px; display: flex; align-items: center; justify-content: center;">
+                            {% if item.product and item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product_name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            {% else %}
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                </svg>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-main);">
+                                {% if item.product %}
+                                    <a href="{% url 'product_detail' item.product.id %}">{{ item.product_name }}</a>
+                                {% else %}
+                                    {{ item.product_name }}
+                                {% endif %}
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
+                                Locked Unit Price: {{ item.price|inr }} &times; Qty: {{ item.quantity }}
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--discount-green); font-weight: 600; margin-top: 0.2rem;">
+                                &#10003; 7 Days Replacement Policy &bull; 1 Year Brand Warranty
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Subtotal</div>
+                        <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">
+                            {{ item.subtotal|inr }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Shipping & Final Tax Breakdown -->
+    <div>
+        <!-- Delivery Destination Box -->
+        <div style="background: white; border-radius: var(--radius-md); border: 1px solid var(--border); padding: 1.25rem; margin-bottom: 1.25rem;">
+            <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem; text-transform: uppercase; color: var(--text-muted);">
+                DELIVERY ADDRESS
+            </h3>
+            <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">
+                {{ order.full_name|default:order.user.username }}
+            </div>
+            <div style="font-size: 0.85rem; color: #475569; line-height: 1.5;">
+                {{ order.shipping_address|default:"Standard Delivery Address" }}<br>
+                {% if order.city or order.pincode %}
+                    {{ order.city }} - {{ order.pincode }}, {{ order.state }}<br>
+                {% endif %}
+                <strong>Phone:</strong> {{ order.phone_number|default:"Not specified" }}<br>
+                <strong>Type:</strong> {{ order.address_type }}
+            </div>
+            <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); font-size: 0.85rem;">
+                <strong>Payment Method:</strong> {{ order.payment_method }}
+            </div>
+        </div>
+
+        <!-- Price Details Breakdown -->
+        <div class="price-summary-card">
+            <h3 class="price-summary-title">TAX INVOICE DETAILS</h3>
+
+            <div class="summary-line">
+                <span style="color: #475569;">Total MRP</span>
+                <span style="font-weight: 600;">
+                    {% if order.mrp_total > 0 %}{{ order.mrp_total|inr }}{% else %}{{ order.total_amount|inr }}{% endif %}
+                </span>
+            </div>
+
+            {% if order.savings_total > 0 %}
+                <div class="summary-line">
+                    <span style="color: #475569;">Discount on MRP</span>
+                    <span style="color: var(--discount-green); font-weight: 700;">- {{ order.savings_total|inr }}</span>
+                </div>
+            {% endif %}
+
+            <div class="summary-line">
+                <span style="color: #475569;">Delivery Charges</span>
+                <span style="color: var(--discount-green); font-weight: 700;">
+                    {% if order.delivery_charges == 0 %}FREE{% else %}{{ order.delivery_charges|inr }}{% endif %}
+                </span>
+            </div>
+
+            <div class="summary-line">
+                <span style="color: #475569;">Secured Packaging Fee</span>
+                <span style="font-weight: 600;">₹29</span>
+            </div>
+
+            <div class="summary-line total-line">
+                <span>Total Amount Paid</span>
+                <span style="color: var(--text-main);">{{ order.total_amount|inr }}</span>
+            </div>
+
+            <div style="font-size: 0.78rem; color: var(--text-muted); text-align: center;">
+                Includes all Central GST &amp; State GST (CGST + SGST). Official Shopora Digital Invoice.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

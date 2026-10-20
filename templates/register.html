@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Shopora Account | Everything you love, all in one place.{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h1 class="auth-title">Looks like you're new here!</h1>
+        <p class="auth-subtitle">Sign up with your details to start shopping on Shopora.</p>
+
+        <form method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}" class="form-label">Choose Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <p class="form-error">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    {% for error in form.email.errors %}
+                        <p class="form-error">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                        <p class="form-error">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.confirm_password.id_for_label }}" class="form-label">Confirm Password</label>
+                {{ form.confirm_password }}
+                {% if form.confirm_password.errors %}
+                    {% for error in form.confirm_password.errors %}
+                        <p class="form-error">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            {% if form.non_field_errors %}
+                <div style="margin-bottom: 1rem;">
+                    {% for error in form.non_field_errors %}
+                        <p class="form-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin: 1rem 0; line-height: 1.5;">
+                By continuing, you agree to Shopora's <a href="{% url 'home' %}" style="color: var(--primary);">Terms of Use</a> and <a href="{% url 'home' %}" style="color: var(--primary);">Privacy Policy</a>.
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" style="background: var(--brand-orange); border: none; font-weight: 700; padding: 0.85rem;" id="register-submit-btn">
+                CONTINUE
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+            Existing User? 
+            <a href="{% url 'login' %}" style="font-weight: 700; color: var(--primary);">Log in</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

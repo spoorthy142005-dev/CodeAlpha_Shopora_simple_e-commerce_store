@@ -1,0 +1,1796 @@
+{% load static %}
+{% load indian_currency %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}Shopora - Everything you love, all in one place. Discover Mobiles, Electronics, Laptops, Fashion, Footwear, Watches, Home & Beauty.{% endblock %}">
+    <title>{% block title %}Shopora | Everything you love, all in one place{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20261019_v5">
+    <style id="shopora-theme-master">
+/* Master Stylesheet - Shopora: Everything you love, all in one place */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  
+  /* Indian E-Commerce Brand Palette (Flipkart Blue & Amazon Warmth) */
+  --primary: #2874f0;
+  --primary-hover: #175cd3;
+  --primary-light: #eff6ff;
+  --brand-orange: #fb641b;
+  --brand-orange-hover: #e5530a;
+  --brand-yellow: #ff9f00;
+  --brand-yellow-hover: #e68f00;
+  --festive-gold: #f59e0b;
+  
+  /* Trust & Status Colors */
+  --discount-green: #388e3c;
+  --discount-bg: #e8f5e9;
+  --rating-green: #388e3c;
+  --rating-yellow: #f59e0b;
+  --rating-orange: #f97316;
+  --assured-blue: #0284c7;
+  
+  /* Surfaces & Neutrals */
+  --dark-bg: #131921;
+  --dark-subtle: #232f3e;
+  --surface: #ffffff;
+  --surface-alt: #f1f3f6;
+  --surface-hover: #f8fafc;
+  --border: #e0e0e0;
+  --border-light: #f0f0f0;
+  --text-main: #212121;
+  --text-muted: #878787;
+  --text-light: #9e9e9e;
+  
+  /* Alerts */
+  --danger: #ef4444;
+  --danger-bg: #fee2e2;
+  --info: #0284c7;
+  --info-bg: #e0f2fe;
+
+  /* Shadows & Radii */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.12);
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+ul, ol, li {
+  list-style: none !important;
+  list-style-type: none !important;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--surface-alt);
+  color: var(--text-main);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+/* Layout Container */
+.container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  width: 100%;
+}
+
+main.content {
+  flex: 1;
+  padding: 1.25rem 0 2.5rem 0;
+}
+
+/* 1. TOP ANNOUNCEMENT STRIP */
+.top-announcement {
+  background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
+  color: #fbbf24;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.top-announcement span.badge-pill {
+  background-color: var(--brand-orange);
+  color: white;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* 2. MAIN HEADER */
+.main-header {
+  background-color: var(--primary);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  height: 68px;
+}
+
+.brand-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.02em;
+}
+
+.brand-logo span.mart {
+  color: #ffeb3b;
+}
+
+.brand-tagline {
+  font-size: 0.7rem;
+  font-style: italic;
+  color: #e0e7ff;
+  margin-top: -3px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.brand-tagline span.plus {
+  color: #ffeb3b;
+  font-weight: 700;
+}
+
+/* Pincode Location Chip */
+.location-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: rgba(255, 255, 255, 0.12);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: var(--transition);
+}
+
+.location-chip:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Search Box */
+.header-search {
+  flex: 1;
+  max-width: 620px;
+}
+
+.search-bar {
+  display: flex;
+  background: white;
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border: none;
+  outline: none;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text-main);
+}
+
+.search-input::placeholder {
+  color: #9e9e9e;
+}
+
+.search-submit-btn {
+  background: none;
+  border: none;
+  padding: 0 1.25rem;
+  color: var(--primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.search-submit-btn:hover {
+  background-color: #f8fafc;
+}
+
+/* Header Action Links */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  list-style: none;
+}
+
+.header-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-xs);
+  position: relative;
+  transition: var(--transition);
+}
+
+.header-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.header-btn.login-btn {
+  background-color: white;
+  color: var(--primary);
+  border: 1px solid white;
+  font-weight: 700;
+  padding: 0.4rem 1.25rem;
+}
+
+.header-btn.login-btn:hover {
+  background-color: #f8fafc;
+  color: var(--primary-hover);
+}
+
+.header-badge {
+  background-color: var(--brand-orange);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  border: 1px solid white;
+}
+
+/* 3. CATEGORY NAVIGATION STRIP */
+.category-strip {
+  background-color: white;
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.category-nav-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0.5rem 0;
+}
+
+.category-nav-list::-webkit-scrollbar {
+  display: none;
+}
+
+.category-nav-item {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.category-nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-main);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.category-nav-link:hover, .category-nav-link.active {
+  color: var(--primary);
+}
+
+.category-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+/* 4. VALUE PROPOSITIONS STRIP */
+.value-strip {
+  background-color: white;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.value-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.value-icon {
+  width: 38px;
+  height: 38px;
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.value-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.value-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* 5. HERO PROMOTIONAL BANNER */
+.hero-banner {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+  color: white;
+  border-radius: var(--radius-md);
+  padding: 2.25rem 2.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hero-banner::after {
+  content: "";
+  position: absolute;
+  right: -50px;
+  bottom: -50px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(255, 235, 59, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.hero-tag {
+  display: inline-block;
+  background-color: var(--brand-orange);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+.hero-title span.highlight {
+  color: #ffeb3b;
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: #bfdbfe;
+  max-width: 550px;
+  margin-bottom: 1.25rem;
+}
+
+.hero-deals-pills {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.deal-pill {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* 6. SECTION HEADER */
+.section-header {
+  background-color: white;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  border: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timer-chip {
+  background-color: #fef2f2;
+  color: var(--danger);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid #fecaca;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* 7. CATALOG LAYOUT (SIDEBAR + GRID) */
+.catalog-layout {
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  gap: 1rem;
+}
+
+/* Filter Sidebar */
+.filter-sidebar {
+  background-color: white;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  height: fit-content;
+  position: sticky;
+  top: 80px;
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 1rem;
+}
+
+.filter-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.clear-btn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-transform: uppercase;
+}
+
+.filter-group {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.filter-group-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+}
+
+.filter-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.filter-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.filter-checkbox-label:hover {
+  color: var(--primary);
+}
+
+/* Sort Bar */
+.catalog-sort-bar {
+  background-color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.sort-options {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sort-option-btn {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 0.25rem 0.5rem;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.sort-option-btn.active {
+  color: var(--primary);
+  font-weight: 700;
+  border-bottom-color: var(--primary);
+}
+
+/* 8. PRODUCT CARDS (Flipkart & Amazon India Style) */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.product-card {
+  background-color: white;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.product-card:hover {
+  box-shadow: var(--shadow-hover);
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+}
+
+.card-img-container {
+  width: 100%;
+  height: 230px;
+  background-color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 0.75rem;
+}
+
+.card-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: var(--transition);
+}
+
+.product-card:hover .card-img {
+  transform: scale(1.04);
+}
+
+/* Wishlist Heart Button */
+.wishlist-toggle-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: white;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  box-shadow: var(--shadow-sm);
+  color: #94a3b8;
+  transition: var(--transition);
+}
+
+.wishlist-toggle-btn:hover, .wishlist-toggle-btn.active {
+  color: #ef4444;
+  border-color: #fecaca;
+  background-color: #fff1f2;
+}
+
+/* Badge Top Left */
+.product-badge-flag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: var(--brand-orange);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  z-index: 5;
+}
+
+.product-badge-flag.bestseller {
+  background-color: #d97706;
+}
+
+/* Card Body */
+.card-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.product-brand {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.25rem;
+}
+
+.product-name-link {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.35;
+  margin-bottom: 0.45rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.5rem;
+}
+
+.product-name-link:hover {
+  color: var(--primary);
+}
+
+/* Rating Badge */
+.rating-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.6rem;
+}
+
+.star-badge {
+  background-color: var(--rating-green);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.review-count {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Pricing Layout */
+.pricing-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.current-price {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.original-mrp {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.discount-tag {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--discount-green);
+}
+
+/* Assured & Delivery Tag */
+.delivery-tag {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.assured-badge {
+  color: var(--assured-blue);
+  font-weight: 800;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* Card Button */
+.card-cta-btn {
+  margin-top: auto;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: var(--radius-xs);
+  border: none;
+  cursor: pointer;
+  background-color: #f1f5f9;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition: var(--transition);
+}
+
+.card-cta-btn:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Dual Action Buttons Group on Cards */
+.card-btn-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  margin-top: auto;
+  width: 100%;
+}
+
+.btn-card-cart {
+  padding: 0.5rem 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: var(--radius-xs);
+  border: 1px solid #f59e0b;
+  cursor: pointer;
+  background-color: #ff9f00;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-card-cart:hover {
+  background-color: #e68f00;
+  color: #000;
+}
+
+.btn-card-buy {
+  padding: 0.5rem 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: var(--radius-xs);
+  border: 1px solid #ea580c;
+  cursor: pointer;
+  background-color: #fb641b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-card-buy:hover {
+  background-color: #e5530a;
+  color: white;
+}
+
+/* Visual Category Cards Strip */
+.visual-categories-section {
+  margin-bottom: 1.5rem;
+}
+
+.visual-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.75rem;
+}
+
+.visual-cat-card {
+  background: white;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  padding: 0.85rem 0.4rem;
+  text-align: center;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+
+.visual-cat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary);
+}
+
+.visual-cat-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: var(--surface-alt);
+  transition: var(--transition);
+}
+
+.visual-cat-card:hover .visual-cat-icon {
+  background: var(--primary-light);
+  transform: scale(1.08);
+}
+
+.visual-cat-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.visual-cat-offer {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--discount-green);
+}
+
+/* 9. PRODUCT DETAIL PAGE (Flipkart/Amazon Architecture) */
+.product-detail-layout {
+  display: grid;
+  grid-template-columns: 460px 1fr;
+  gap: 2rem;
+  background-color: white;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  padding: 1.75rem;
+}
+
+/* Left Image Column */
+.detail-media-col {
+  position: sticky;
+  top: 90px;
+  height: fit-content;
+}
+
+.gallery-preview-wrapper {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background-color: white;
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.gallery-main-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.gallery-thumbs-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.thumb-box {
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  padding: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.thumb-box:hover, .thumb-box.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(40, 116, 240, 0.2);
+}
+
+.thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.detail-actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.btn-add-cart-large {
+  background-color: var(--brand-yellow);
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.85rem;
+  border: none;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.btn-add-cart-large:hover {
+  background-color: var(--brand-yellow-hover);
+}
+
+.btn-buy-now-large {
+  background-color: var(--brand-orange);
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.85rem;
+  border: none;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.btn-buy-now-large:hover {
+  background-color: var(--brand-orange-hover);
+}
+
+/* Right Information Column */
+.detail-info-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.breadcrumb-nav {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.detail-brand-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 0.25rem;
+}
+
+.detail-product-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.detail-price-box {
+  background-color: #f8fafc;
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  margin-bottom: 1.25rem;
+}
+
+.special-price-badge {
+  color: var(--discount-green);
+  font-weight: 700;
+  font-size: 0.82rem;
+  margin-bottom: 0.25rem;
+}
+
+.large-price {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.savings-label {
+  color: var(--discount-green);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* Bank Offers Card */
+.offers-card {
+  border: 1px dashed #cbd5e1;
+  background-color: #fdfdfd;
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.25rem;
+}
+
+.offers-card-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-main);
+}
+
+.offer-item {
+  font-size: 0.82rem;
+  color: #334155;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.offer-badge {
+  background-color: #fef08a;
+  color: #854d0e;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 1px 5px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Delivery PIN Code Checker */
+.pincode-card {
+  background-color: white;
+  border: 1px solid var(--border);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.25rem;
+}
+
+.pincode-form {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 320px;
+  margin-top: 0.5rem;
+}
+
+.pincode-input {
+  flex: 1;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.pincode-btn {
+  background-color: white;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  padding: 0.45rem 0.85rem;
+  font-weight: 700;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+}
+
+.pincode-btn:hover {
+  background-color: var(--primary-light);
+}
+
+.pincode-status-text {
+  font-size: 0.82rem;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+/* Highlights List */
+.highlights-box {
+  margin-bottom: 1.5rem;
+}
+
+.highlights-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.highlights-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.highlights-list li {
+  font-size: 0.85rem;
+  color: #475569;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+.highlights-list li span.tick {
+  color: var(--discount-green);
+  font-weight: 700;
+}
+
+/* Specifications Table */
+.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.specs-table td {
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--border-light);
+}
+
+.specs-table td.spec-key {
+  color: var(--text-muted);
+  width: 35%;
+  font-weight: 500;
+  background-color: #fafafa;
+}
+
+.specs-table td.spec-val {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+/* 10. CART & CHECKOUT PAGES */
+.cart-checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.5rem;
+}
+
+.cart-items-card {
+  background-color: white;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.cart-item-row {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.cart-item-img-box {
+  width: 100px;
+  height: 100px;
+  padding: 0.5rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-item-img-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.cart-item-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0.35rem;
+}
+
+.cart-action-links {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.cart-action-btn {
+  background: none;
+  border: none;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.cart-action-btn:hover {
+  color: var(--primary);
+}
+
+.cart-action-btn.remove-btn:hover {
+  color: var(--danger);
+}
+
+/* Price Details Summary Card */
+.price-summary-card {
+  background-color: white;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  height: fit-content;
+  position: sticky;
+  top: 90px;
+}
+
+.price-summary-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 1rem;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  margin-bottom: 0.85rem;
+}
+
+.summary-line.total-line {
+  border-top: 1px dashed var(--border);
+  border-bottom: 1px dashed var(--border);
+  padding: 0.85rem 0;
+  font-weight: 800;
+  font-size: 1.15rem;
+  margin: 1rem 0;
+}
+
+.savings-banner {
+  color: var(--discount-green);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  background-color: var(--discount-bg);
+  border-radius: var(--radius-xs);
+  text-align: center;
+}
+
+/* 11. INDIAN CHECKOUT FORM */
+.checkout-card {
+  background-color: white;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.1rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  color: var(--text-main);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  font-size: 0.92rem;
+  font-family: inherit;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(40, 116, 240, 0.15);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-error {
+  color: var(--danger);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* Radio button options */
+.radio-options-group {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.35rem;
+}
+
+.radio-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 12. WISHLIST PAGE */
+.wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+/* 13. ALERTS & MESSAGES */
+.messages-container {
+  margin-bottom: 1.25rem;
+}
+
+.alert {
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.alert-success { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+.alert-error, .alert-danger { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+.alert-warning { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.alert-info { background-color: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+
+.alert-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+}
+
+/* 14. FOOTER */
+.main-footer {
+  background-color: var(--dark-bg);
+  color: #9ca3af;
+  margin-top: auto;
+  font-size: 0.85rem;
+}
+
+.footer-top {
+  border-bottom: 1px solid #374151;
+  padding: 2.5rem 0;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.footer-col-title {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.footer-links a:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  padding: 1.25rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.8rem;
+}
+
+/* 15. RESPONSIVE MEDIA QUERIES */
+@media (max-width: 1024px) {
+  .catalog-layout {
+    grid-template-columns: 1fr;
+  }
+  .filter-sidebar {
+    display: none; /* Can be toggled on mobile */
+  }
+  .product-detail-layout {
+    grid-template-columns: 1fr;
+  }
+  .cart-checkout-grid {
+    grid-template-columns: 1fr;
+  }
+  .value-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .visual-categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    height: auto;
+    padding: 0.75rem 0;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .header-search {
+    order: 3;
+    max-width: 100%;
+    width: 100%;
+  }
+  .value-strip {
+    grid-template-columns: 1fr;
+  }
+  .visual-categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .hero-banner {
+    padding: 1.5rem;
+  }
+  .hero-title {
+    font-size: 1.5rem;
+  }
+}
+
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- 1. Top Festive Announcement Bar -->
+    <div class="top-announcement">
+        <span class="badge-pill">FESTIVE SALE</span>
+        <span>🇮🇳 Free Delivery across India on orders above ₹499 &bull; Extra 10% Instant Discount on HDFC &amp; SBI Cards with code <strong>FESTIVE10</strong></span>
+    </div>
+
+    <!-- 2. Main E-Commerce Header -->
+    <header class="main-header">
+        <div class="container header-container">
+            <!-- Brand Logo -->
+            <div class="brand-wrapper">
+                <a href="{% url 'home' %}" class="brand-logo" id="brand-logo">
+                    <span>Shop<span class="mart">ora</span></span>
+                </a>
+                <span class="brand-tagline">
+                    Everything you love, all in one place.
+                </span>
+            </div>
+
+            <!-- Delivery Location Chip -->
+            <div class="location-chip" id="location-picker" title="Deliver to Bengaluru 560001">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span>Deliver to <strong>Bengaluru 560001</strong></span>
+            </div>
+
+            <!-- Prominent Search Bar -->
+            <div class="header-search">
+                <form action="{% url 'home' %}" method="get" class="search-bar" id="header-search-form">
+                    <input type="text" name="q" class="search-input" placeholder="Search for products, brands (Apple, Samsung, boAt, Titan)..." value="{% if query %}{{ query }}{% endif %}" aria-label="Search products">
+                    {% if selected_category %}
+                        <input type="hidden" name="category" value="{{ selected_category.slug }}">
+                    {% endif %}
+                    <button type="submit" class="search-submit-btn" aria-label="Search button">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Action Links -->
+            <nav>
+                <ul class="header-actions">
+                    {% if user.is_authenticated %}
+                        <!-- Wishlist -->
+                        <li>
+                            <a href="{% url 'wishlist' %}" class="header-btn" id="nav-wishlist-link">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                                <span>Wishlist</span>
+                                <span class="header-badge" id="header-wishlist-counter">{{ wishlist_item_count|default:"0" }}</span>
+                            </a>
+                        </li>
+
+                        <!-- Orders -->
+                        <li>
+                            <a href="{% url 'order_list' %}" class="header-btn" id="nav-orders-link">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                                </svg>
+                                <span>Orders</span>
+                            </a>
+                        </li>
+
+                        <!-- Cart -->
+                        <li>
+                            <a href="{% url 'cart_detail' %}" class="header-btn" id="nav-cart-link">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                </svg>
+                                <span>Cart</span>
+                                <span class="header-badge" id="cart-counter">{{ cart_item_count|default:"0" }}</span>
+                            </a>
+                        </li>
+
+                        <!-- Account User Dropdown -->
+                        <li>
+                            <a href="{% url 'logout' %}" class="header-btn" style="font-size: 0.82rem; background: rgba(0,0,0,0.15);" title="Logout">
+                                Hi, <strong>{{ user.username }}</strong> &bull; Logout
+                            </a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="{% url 'login' %}" class="header-btn login-btn" id="nav-login-btn">
+                                Sign In
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'login' %}" class="header-btn" id="nav-wishlist-guest">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                                <span>Wishlist</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'login' %}" class="header-btn" id="nav-cart-guest">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                </svg>
+                                <span>Cart</span>
+                                <span class="header-badge">0</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 3. Category Navigation Strip -->
+    <nav class="category-strip">
+        <div class="container">
+            <ul class="category-nav-list">
+                <li class="category-nav-item">
+                    <a href="{% url 'home' %}" class="category-nav-link {% if not selected_category %}active{% endif %}">
+                        <span class="category-icon">&#127968;</span>
+                        <span>All Stores</span>
+                    </a>
+                </li>
+                {% for cat in nav_categories %}
+                    <li class="category-nav-item">
+                        <a href="{% url 'home' %}?category={{ cat.slug }}" class="category-nav-link {% if selected_category and selected_category.slug == cat.slug %}active{% endif %}">
+                            <span class="category-icon">{{ cat.icon|default:"&#128722;" }}</span>
+                            <span>{{ cat.name }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="content">
+        <div class="container">
+            <!-- Flash Alert Messages -->
+            {% if messages %}
+                <div class="messages-container" id="alert-messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags|default:'info' }}" role="alert">
+                            <span>{{ message }}</span>
+                            <button type="button" class="alert-close" aria-label="Close alert">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- 4. Indian E-Commerce Footer -->
+    <footer class="main-footer">
+        <div class="footer-top">
+            <div class="container footer-grid">
+                <div>
+                    <h4 class="footer-col-title">ABOUT SHOPORA</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'home' %}">Contact Us</a></li>
+                        <li><a href="{% url 'home' %}">About Shopora</a></li>
+                        <li><a href="{% url 'home' %}">Careers &amp; Leadership</a></li>
+                        <li><a href="{% url 'home' %}">Shopora Wholesale</a></li>
+                        <li><a href="{% url 'home' %}">Corporate Information</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-col-title">CUSTOMER CARE</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'home' %}">Payments &amp; NetBanking</a></li>
+                        <li><a href="{% url 'home' %}">Shipping &amp; Delivery Tracking</a></li>
+                        <li><a href="{% url 'home' %}">7-Day Easy Replacement</a></li>
+                        <li><a href="{% url 'order_list' %}">Returns &amp; Order Status</a></li>
+                        <li><a href="{% url 'home' %}">GST Invoices &amp; Business</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-col-title">CONSUMER POLICY</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'home' %}">Cancellation &amp; Returns</a></li>
+                        <li><a href="{% url 'home' %}">Terms of Use</a></li>
+                        <li><a href="{% url 'home' %}">Security &amp; Privacy Policy</a></li>
+                        <li><a href="{% url 'home' %}">Grievance Redressal Officer</a></li>
+                        <li><a href="{% url 'home' %}">EPR Compliance</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-col-title">REGISTERED OFFICE ADDRESS</h4>
+                    <p style="font-size: 0.8rem; line-height: 1.6; color: #9ca3af;">
+                        Shopora Internet Commerce Private Limited,<br>
+                        Buildings Alyssa, Begonia &amp; Clove Embassy Tech Village,<br>
+                        Outer Ring Road, Devarabeesanahalli Village,<br>
+                        Bengaluru, 560103, Karnataka, India<br>
+                        CIN: U51109KA2026PTC066107<br>
+                        Telephone: 080-4547-9999
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <div>
+                &copy; 2026 Shopora.in &bull; Everything you love, all in one place. Built with Django &amp; SQLite. All product trademarks, logos, and brand names belong to their respective owners.
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center; color: #cbd5e1;">
+                <span>💳 RuPay</span>
+                <span>UPI Accepted</span>
+                <span>MasterCard / Visa</span>
+                <span>Cash on Delivery</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

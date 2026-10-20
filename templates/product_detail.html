@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load indian_currency %}
+
+{% block title %}{{ product.name }} Price in India, Specs &amp; Offers | Shopora{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="breadcrumb-nav">
+    <a href="{% url 'home' %}">Home</a> &rsaquo;
+    {% if product.category %}
+        <a href="{% url 'home' %}?category={{ product.category.slug }}">{{ product.category.name }}</a> &rsaquo;
+    {% endif %}
+    {% if product.brand %}
+        <a href="{% url 'home' %}?brand={{ product.brand.slug }}">{{ product.brand.name }}</a> &rsaquo;
+    {% endif %}
+    <span style="color: var(--text-main); font-weight: 600;">{{ product.name|truncatechars:35 }}</span>
+</div>
+
+<div class="product-detail-layout">
+    <!-- Left Column: Gallery & Dual CTAs -->
+    <div class="detail-media-col">
+        <div class="gallery-preview-wrapper">
+            <!-- Wishlist Heart Button -->
+            <button type="button" 
+                    class="wishlist-toggle-btn {% if is_wishlisted %}active{% endif %}" 
+                    data-product-id="{{ product.id }}"
+                    title="Add to Wishlist"
+                    style="top: 15px; right: 15px; width: 40px; height: 40px; font-size: 1.25rem;">
+                {% if is_wishlisted %}&#9829;{% else %}&#9825;{% endif %}
+            </button>
+
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" id="main-gallery-image" class="gallery-main-img">
+            {% else %}
+                <div style="color: var(--text-light); text-align: center;">
+                    <svg width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    </svg>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Thumbnails (Main + Gallery Images) -->
+        <div class="gallery-thumbs-row">
+            {% if product.image %}
+                <div class="thumb-box active" data-large="{{ product.image.url }}">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="thumb-img">
+                </div>
+            {% endif %}
+            {% for gimg in gallery_images %}
+                <div class="thumb-box" data-large="{{ gimg.image.url }}">
+                    <img src="{{ gimg.image.url }}" alt="{{ gimg.alt_text|default:product.name }}" class="thumb-img">
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Dual Action Buttons (Add to Cart & Buy Now) -->
+        {% if product.is_in_stock %}
+            {% if user.is_authenticated %}
+                <form action="{% url 'add_to_cart' product.id %}" method="post">
+                    {% csrf_token %}
+                    
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Quantity:</span>
+                        <div class="quantity-control" style="display: flex; align-items: center; gap: 0.35rem;">
+                            <button type="button" class="quantity-btn btn-qty-minus" style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 4px; background: white; cursor: pointer;">&minus;</button>
+                            <input type="number" name="quantity" class="quantity-input" value="1" min="1" max="{{ product.stock }}" style="width: 50px; height: 32px; text-align: center; border: 1px solid var(--border); border-radius: 4px; font-weight: 700;">
+                            <button type="button" class="quantity-btn btn-qty-plus" style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 4px; background: white; cursor: pointer;">&plus;</button>
+                        </div>
+                    </div>
+
+                    <div class="detail-actions-row">
+                        <button type="submit" class="btn-add-cart-large" id="detail-add-cart-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            ADD TO CART
+                        </button>
+                        <button type="submit" name="buy_now" value="true" class="btn-buy-now-large" id="detail-buy-now-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                            BUY NOW
+                        </button>
+                    </div>
+                </form>
+            {% else %}
+                <div style="background: #f8fafc; padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border); text-align: center;">
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                        Sign in to save this item, view bank discounts, and complete quick checkout.
+                    </p>
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="btn-add-cart-large" style="text-align: center;">
+                        SIGN IN TO PURCHASE
+                    </a>
+                </div>
+            {% endif %}
+        {% else %}
+            <div style="background: #fee2e2; padding: 1rem; border-radius: var(--radius-sm); text-align: center;">
+                <p style="color: #991b1b; font-weight: 700; margin-bottom: 0.25rem;">CURRENTLY OUT OF STOCK</p>
+                <p style="font-size: 0.8rem; color: #7f1d1d;">This item is temporarily unavailable from the brand warehouse.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Right Column: Product Info, Pricing, Offers & Specs -->
+    <div class="detail-info-col">
+        <!-- Brand -->
+        {% if product.brand %}
+            <div class="detail-brand-name">{{ product.brand.name }}</div>
+        {% endif %}
+
+        <!-- Title -->
+        <h1 class="detail-product-title">{{ product.name }}</h1>
+
+        <!-- Rating & Review Count -->
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+            <div class="star-badge" style="font-size: 0.85rem; padding: 3px 8px;">
+                {{ product.rating }} ★
+            </div>
+            <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">
+                {{ product.review_count|inr_num }} Ratings &amp; {{ product.review_count|add:'-80'|inr_num }} Reviews
+            </span>
+            <span class="assured-badge" style="font-size: 0.85rem;">&#10003; Shopora Assured</span>
+        </div>
+
+        <!-- Pricing Breakdown -->
+        <div class="detail-price-box">
+            <div class="special-price-badge">SPECIAL FESTIVE PRICE</div>
+            <div style="display: flex; align-items: baseline; gap: 0.85rem; flex-wrap: wrap;">
+                <span class="large-price">{{ product.price|inr }}</span>
+                {% if product.mrp and product.mrp > product.price %}
+                    <span style="font-size: 1.15rem; color: var(--text-muted); text-decoration: line-through;">
+                        {{ product.mrp|inr }}
+                    </span>
+                    <span class="savings-label">
+                        Save {{ product.savings_amount|inr }} ({{ product.discount_percentage }}% off)
+                    </span>
+                {% endif %}
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem;">
+                Inclusive of all Indian taxes &bull; Free Shipping on this product
+            </div>
+        </div>
+
+        <!-- Bank & Partner Offers Card -->
+        <div class="offers-card">
+            <div class="offers-card-title">
+                <span>&#127991; Available Bank &amp; Partner Offers</span>
+            </div>
+            <div class="offer-item">
+                <span class="offer-badge">BANK OFFER</span>
+                <span><strong>10% Instant Discount</strong> up to ₹1,500 on HDFC Bank &amp; SBI Credit Cards on orders of ₹4,999 and above.</span>
+            </div>
+            <div class="offer-item">
+                <span class="offer-badge">NO COST EMI</span>
+                <span>Avail No Cost EMI starting from <strong>{{ product.price|inr }}</strong> on Bajaj Finserv &amp; major credit cards.</span>
+            </div>
+            <div class="offer-item">
+                <span class="offer-badge">PARTNER OFFER</span>
+                <span>Get flat ₹500 cashback on payments via RuPay UPI. Use code <strong>RUPAYFEST</strong>.</span>
+            </div>
+        </div>
+
+        <!-- Delivery PIN Code Checker -->
+        <div class="pincode-card">
+            <div style="font-size: 0.88rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span>Delivery &amp; Service Availability Check</span>
+            </div>
+            <div class="pincode-form">
+                <input type="text" id="pincode-input" class="pincode-input" placeholder="Enter 6-digit Indian PIN code" maxlength="6" value="560001">
+                <button type="button" id="btn-check-pincode" class="pincode-btn">Check</button>
+            </div>
+            <div id="pincode-result" class="pincode-status-text">
+                <span style="color: #15803d;">&#10003; <strong>Delivery in {{ product.delivery_days }} Days</strong> | <span style="color: #0284c7;">FREE</span> &bull; Cash on Delivery available at 560001</span>
+            </div>
+        </div>
+
+        <!-- Key Highlights -->
+        {% if product.highlights_list %}
+            <div class="highlights-box">
+                <h3 class="highlights-title">Key Features &amp; Highlights</h3>
+                <ul class="highlights-list">
+                    {% for h in product.highlights_list %}
+                        <li>
+                            <span class="tick">&#10003;</span>
+                            <span>{{ h }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <!-- Product Overview Description -->
+        <div style="margin-bottom: 1.5rem;">
+            <h3 class="highlights-title">Product Description</h3>
+            <p style="font-size: 0.9rem; color: #334155; line-height: 1.7;">
+                {{ product.description|linebreaksbr }}
+            </p>
+        </div>
+
+        <!-- Specifications Table -->
+        {% if product.specifications %}
+            <div style="margin-bottom: 1.5rem;">
+                <h3 class="highlights-title">Detailed Specifications</h3>
+                <table class="specs-table">
+                    <tbody>
+                        {% for k, v in product.specifications.items %}
+                            <tr>
+                                <td class="spec-key">{{ k }}</td>
+                                <td class="spec-val">{{ v }}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td class="spec-key">Warranty</td>
+                            <td class="spec-val">{{ product.warranty }}</td>
+                        </tr>
+                        <tr>
+                            <td class="spec-key">Model / SKU</td>
+                            <td class="spec-val">{{ product.sku|default:"SHP-IND-STD" }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        <!-- Verification & Genuine Guarantee Disclosure -->
+        <div style="background-color: #f1f5f9; padding: 0.85rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.78rem; color: #64748b; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+                <strong>Verified Source:</strong> {{ product.verified_source|default:"Official Indian Brand Store" }}
+                {% if product.price_verified_date %}
+                    &bull; <strong>Verified Date:</strong> {{ product.price_verified_date|date:"M d, Y" }}
+                {% endif %}
+            </div>
+            <div style="color: var(--discount-green); font-weight: 700;">
+                &#10003; 100% Original Brand Assured
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related Products Section -->
+{% if related_products %}
+    <div style="margin-top: 2.5rem;">
+        <div class="section-header">
+            <h2 class="section-title">Similar Products in {{ product.category.name }}</h2>
+            <a href="{% url 'home' %}?category={{ product.category.slug }}" style="color: var(--primary); font-size: 0.85rem; font-weight: 700;">
+                VIEW MORE &rarr;
+            </a>
+        </div>
+        <div class="products-grid" style="background: white; padding: 1.25rem; border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md);">
+            {% for rel_prod in related_products %}
+                {% include "includes/product_card.html" with product=rel_prod %}
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load indian_currency %}
+
+{% block title %}Shopping Cart ({{ cart.total_items }} items) | Shopora{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">My Shopping Cart</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Review selected items and check delivery estimates before checkout</p>
+</div>
+
+{% if items %}
+    <div class="cart-checkout-grid">
+        <!-- Left: Items in Cart -->
+        <div class="cart-items-card">
+            <div style="padding: 1rem 1.25rem; background: #fafafa; border-bottom: 1px solid var(--border-light); font-weight: 700; font-size: 0.9rem; color: var(--text-muted);">
+                ITEMS IN CART ({{ cart.total_items }})
+            </div>
+
+            {% for item in items %}
+                <div class="cart-item-row" id="cart-item-{{ item.id }}">
+                    <!-- Image -->
+                    <div class="cart-item-img-box">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                        {% else %}
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            </svg>
+                        {% endif %}
+                    </div>
+
+                    <!-- Details -->
+                    <div>
+                        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">
+                            {{ item.product.brand.name|default:"Shopora" }}
+                        </div>
+                        <h2 class="cart-item-title" style="margin: 0 0 0.35rem 0;">
+                            <a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a>
+                        </h2>
+
+                        <div class="pricing-row" style="margin-bottom: 0.5rem;">
+                            <span class="current-price" style="font-size: 1.15rem;">{{ item.product.price|inr }}</span>
+                            {% if item.product.mrp and item.product.mrp > item.product.price %}
+                                <span class="original-mrp">{{ item.product.mrp|inr }}</span>
+                                <span class="discount-tag">{{ item.product.discount_percentage }}% off</span>
+                            {% endif %}
+                        </div>
+
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">
+                            Delivery in {{ item.product.delivery_days }} days &bull; <span style="color: var(--discount-green); font-weight: 600;">Free Delivery</span>
+                        </div>
+
+                        <!-- Actions: Update Quantity, Remove, Move to Wishlist -->
+                        <div class="cart-action-links">
+                            <!-- Quantity Form -->
+                            <form action="{% url 'update_cart_item' item.id %}" method="post" style="display: flex; align-items: center; gap: 0.35rem;">
+                                {% csrf_token %}
+                                <label for="qty-{{ item.id }}" style="font-size: 0.8rem; color: var(--text-muted);">Qty:</label>
+                                <input type="number" id="qty-{{ item.id }}" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" 
+                                       style="width: 55px; padding: 0.25rem; text-align: center; border: 1px solid var(--border); border-radius: 4px; font-weight: 700; font-size: 0.85rem;"
+                                       aria-label="Quantity">
+                                <button type="submit" class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">
+                                    Update
+                                </button>
+                            </form>
+
+                            <!-- Remove Item Form -->
+                            <form action="{% url 'remove_cart_item' item.id %}" method="post" class="remove-item-form">
+                                {% csrf_token %}
+                                <button type="submit" class="cart-action-btn remove-btn">
+                                    REMOVE
+                                </button>
+                            </form>
+
+                            <!-- Save for later / Move to Wishlist -->
+                            <a href="{% url 'toggle_wishlist' item.product.id %}" class="cart-action-btn" style="color: var(--primary);">
+                                SAVE TO WISHLIST
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Item Subtotal -->
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Item Subtotal</div>
+                        <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-top: 0.2rem;">
+                            {{ item.subtotal|inr }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div style="padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                <a href="{% url 'home' %}" style="color: var(--primary); font-weight: 700; font-size: 0.85rem;">
+                    &larr; CONTINUE SHOPPING
+                </a>
+                <a href="{% url 'checkout' %}" class="btn-buy-now-large" style="padding: 0.75rem 2rem; font-size: 0.95rem;" id="cart-place-order-btn">
+                    PROCEED TO CHECKOUT &rarr;
+                </a>
+            </div>
+        </div>
+
+        <!-- Right: Indian E-Commerce Price Details Card -->
+        <div class="price-summary-card">
+            <h3 class="price-summary-title">PRICE DETAILS</h3>
+
+            <div class="summary-line">
+                <span style="color: #475569;">Price ({{ cart.total_items }} items)</span>
+                <span style="font-weight: 600;">{{ total_mrp|inr }}</span>
+            </div>
+
+            <div class="summary-line">
+                <span style="color: #475569;">Discount on MRP</span>
+                <span style="color: var(--discount-green); font-weight: 700;">- {{ savings|inr }}</span>
+            </div>
+
+            <div class="summary-line">
+                <span style="color: #475569;">Delivery Charges</span>
+                {% if delivery_fee == 0 %}
+                    <span style="color: var(--discount-green); font-weight: 700;">
+                        <span style="text-decoration: line-through; color: var(--text-muted); font-size: 0.82rem; margin-right: 4px;">₹40</span> FREE
+                    </span>
+                {% else %}
+                    <span style="font-weight: 600;">{{ delivery_fee|inr }}</span>
+                {% endif %}
+            </div>
+
+            <div class="summary-line">
+                <span style="color: #475569;">Secured Packaging Fee</span>
+                <span style="font-weight: 600;">{{ packaging_fee|inr }}</span>
+            </div>
+
+            <div class="summary-line total-line">
+                <span>Total Amount Payable</span>
+                <span style="color: var(--text-main);">{{ final_payable|inr }}</span>
+            </div>
+
+            {% if savings > 0 %}
+                <div class="savings-banner" style="margin-bottom: 1.25rem;">
+                    🎉 You will save {{ savings|inr }} on this order!
+                </div>
+            {% endif %}
+
+            <a href="{% url 'checkout' %}" class="btn-buy-now-large" style="width: 100%; text-align: center; padding: 0.85rem; font-size: 0.95rem;">
+                PLACE ORDER ({{ final_payable|inr }})
+            </a>
+
+            <div style="margin-top: 1rem; font-size: 0.75rem; color: #94a3b8; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Safe and Secure Payments &bull; 100% Authentic Products
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="empty-state" style="background: white; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 3.5rem 1.5rem; text-align: center;">
+        <div style="font-size: 3.5rem; color: #cbd5e1; margin-bottom: 1rem;">&#128722;</div>
+        <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--text-main);">Your Shopping Cart is Empty!</h2>
+        <p style="color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; max-width: 450px; margin-left: auto; margin-right: auto;">
+            Explore our curated Indian market collection of Mobiles, Electronics, Fashion, Footwear and Home Appliances.
+        </p>
+        <a href="{% url 'home' %}" class="btn btn-primary" style="padding: 0.75rem 2rem; font-weight: 700;">
+            Shop Now &rarr;
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
