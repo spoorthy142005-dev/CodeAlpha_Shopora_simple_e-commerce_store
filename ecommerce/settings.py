@@ -16,20 +16,33 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-ecommerce-stor
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
 
 # Allowed hosts
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com', 'testserver']
 hosts_env = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
 if hosts_env:
-    ALLOWED_HOSTS = [h.strip() for h in hosts_env.split(',') if h.strip()]
+    for h in hosts_env.split(','):
+        h = h.strip()
+        if h and h not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(h)
 elif DEBUG:
     ALLOWED_HOSTS = ['*']
-else:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+render_external_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if render_external_hostname and render_external_hostname not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(render_external_hostname)
 
 # CSRF Trusted Origins
+CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com']
 csrf_origins_env = os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '')
 if csrf_origins_env:
-    CSRF_TRUSTED_ORIGINS = [o.strip() for o in csrf_origins_env.split(',') if o.strip()]
-else:
-    CSRF_TRUSTED_ORIGINS = []
+    for o in csrf_origins_env.split(','):
+        o = o.strip()
+        if o and o not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(o)
+
+if render_external_hostname:
+    ext_origin = f"https://{render_external_hostname}"
+    if ext_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(ext_origin)
 
 # Application definition
 INSTALLED_APPS = [
