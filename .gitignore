@@ -36,3 +36,6 @@ Thumbs.db
 # Media uploads (ignore root media files but preserve product catalog images)
 /media/*
 !/media/products/
+
+# Temporary scratch folder
+scratch/
