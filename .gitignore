@@ -1,11 +1,38 @@
-# Python / Django
-*.pyc
+# Python bytecode & cache
+*.py[cod]
 __pycache__/
+*$py.class
+
+# Local Databases containing test data
 *.sqlite3
 db.sqlite3
-/media/
+
+# Environment variables & Secrets
+.env
+.env.*
+.env.local
+!.env.example
+
+# Virtual Environments
+venv/
+.venv/
+ENV/
+env/
+
+# Collected Static & Build Artifacts
 /static_collected/
 /staticfiles/
-venv/
-.env
+
+# Logs & Test outputs
+*.log
+*.tmp
+
+# Operating System & IDE Files
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Media uploads (ignore root media files but preserve product catalog images)
+/media/*
+!/media/products/
